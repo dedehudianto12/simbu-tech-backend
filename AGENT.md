@@ -71,7 +71,7 @@ simbu-ticketing-api/
 │   └── 000001_create_tickets_table.down.sql
 ├── .env.example
 ├── .gitignore
-├── CLAUDE.md                    # This file
+├── AGENT.md                    # This file
 └── README.md
 ```
 
@@ -210,7 +210,7 @@ See `.env.example` for all required vars. Key ones:
 
 ```
 PORT=8080
-DATABASE_URL=postgres://simbu:simbu123@localhost:5433/simbu_ticketing?sslmode=disable
+DATABASE_URL=postgres://vernall:kudaliar@localhost:5433/simbu_tech?sslmode=disable
 JWT_SECRET=<random string, min 32 chars>
 JWT_ACCESS_TOKEN_TTL=15m
 JWT_REFRESH_TOKEN_TTL=7d
@@ -268,7 +268,7 @@ ALLOWED_ORIGINS=http://localhost:3000
 - [x] Dependencies installed (chi, pgx/v5, jwt, bcrypt, godotenv, uuid)
 - [x] Migration file 000001 created (tickets table — basic version)
 - [x] PostgreSQL running locally on port 5433
-- [x] Database: simbu_ticketing, user: simbu
+- [x] Database: simbu_tech, user: vernall
 
 ## 9. What Needs To Be Done (in order)
 
