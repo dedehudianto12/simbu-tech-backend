@@ -51,7 +51,8 @@ simbu-ticketing-api/
 │   │   └── auth.go              # POST /api/admin/auth/login, /refresh
 │   ├── service/
 │   │   ├── ticket_service.go    # Business logic: generate ticket_number, calculate sla_due_at
-│   │   └── notification_service.go  # Send email via SMTP (async goroutine)
+│   │   ├── notification_service.go  # Send email via SMTP (async goroutine)
+│   │   └── auth_service.go      # Login, refresh token
 │   ├── repository/
 │   │   ├── ticket_repo.go       # DB queries for tickets, comments, attachments, history
 │   │   └── user_repo.go         # DB queries for users (staff only)
@@ -66,9 +67,10 @@ simbu-ticketing-api/
 │   │   └── jwt.go               # Generate/verify JWT, reusable, no internal/ dependencies
 │   └── validator/
 │       └── validator.go         # Input validation helpers
-├── migrations/
-│   └── 000001_create_tickets_table.up.sql   # Run with golang-migrate
-│   └── 000001_create_tickets_table.down.sql
+├── db/ 
+│   └── migrations/
+│       └── 000001_create_tickets_table.up.sql   # Run with golang-migrate
+│       └── 000001_create_tickets_table.down.sql
 ├── .env.example
 ├── .gitignore
 ├── AGENT.md                    # This file
@@ -147,6 +149,14 @@ new_status      VARCHAR(20) NOT NULL
 changed_by      UUID NOT NULL REFERENCES users(id)
 changed_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 ```
+
+### Project-specific notes
+
+- Migration folder: `db/migrations/` (not `migrations/`)
+- Database name: `simbu_tech` (not `simbu_ticketing`)
+- Database user: `vernall`
+- Database port: `5433` (not default `5432`)
+- Module name: `github.com/dedehudianto12/simbu-tech-backend`
 
 ### SLA rules (used in ticket_service.go)
 
@@ -266,19 +276,18 @@ ALLOWED_ORIGINS=http://localhost:3000
 - [x] Folder structure created
 - [x] go.mod initialized
 - [x] Dependencies installed (chi, pgx/v5, jwt, bcrypt, godotenv, uuid)
-- [x] Migration file 000001 created (tickets table — basic version)
 - [x] PostgreSQL running locally on port 5433
 - [x] Database: simbu_tech, user: vernall
+- [x] Phase 1 — Migration files: all 5 tables created (users, tickets, ticket_comments, ticket_attachments, ticket_status_history)
+- [x] Phase 1 — Model structs: ticket.go, user.go with all enums (status, priority, category, role)
+- [x] Phase 2 — main.go: godotenv, pgxpool with ping, chi router, CORS, JWT middleware, graceful shutdown (SIGINT/SIGTERM)
+- [x] Phase 2 — Middleware: auth.go (JWT verify), cors.go
+- [x] Phase 3 — Repository layer: ticket_repo.go (CRUD, list, comments, status history), user_repo.go — tested against live DB
+- [x] Phase 4 — Service layer: ticket_service.go (crypto/rand ticket number, SLA calc, status transitions), notification_service.go (SMTP email), auth_service.go (login, refresh)
 
 ## 9. What Needs To Be Done (in order)
 
-- [ ] Complete migration files for ALL tables (users, ticket_comments, ticket_attachments, ticket_status_history)
-- [ ] Implement main.go (load env, connect DB pool, setup router, start server)
-- [ ] Implement model structs (ticket.go, user.go)
-- [ ] Implement repository layer (ticket_repo.go, user_repo.go)
-- [ ] Implement service layer (ticket_service.go, notification_service.go)
-- [ ] Implement middleware (auth.go JWT verify, cors.go)
-- [ ] Implement handlers (public_ticket.go, admin_ticket.go, auth.go)
+- [ ] Implement handler layer (public_ticket.go, admin_ticket.go, auth.go)
 - [ ] Test all endpoints manually (curl or Postman)
 - [ ] Write .env for production (Railway deployment)
 - [ ] Deploy to Railway
