@@ -183,10 +183,14 @@ func (s *TicketService) UpdateTicketStatus(ctx context.Context, id uuid.UUID, ne
 		return model.Ticket{}, fmt.Errorf("ticket_service.UpdateTicketStatus: %w", err)
 	}
 
-	current.Status = newStatus
-	go s.notifSvc.SendStatusUpdated(current)
+	updated, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		return model.Ticket{}, fmt.Errorf("ticket_service.UpdateTicketStatus: %w", err)
+	}
 
-	return current, nil
+	go s.notifSvc.SendStatusUpdated(updated)
+
+	return updated, nil
 }
 
 // UpdateTicketFields updates mutable fields on a ticket.
