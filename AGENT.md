@@ -284,10 +284,12 @@ ALLOWED_ORIGINS=http://localhost:3000
 - [x] Phase 2 — Middleware: auth.go (JWT verify), cors.go
 - [x] Phase 3 — Repository layer: ticket_repo.go (CRUD, list, comments, status history), user_repo.go — tested against live DB
 - [x] Phase 4 — Service layer: ticket_service.go (crypto/rand ticket number, SLA calc, status transitions), notification_service.go (SMTP email), auth_service.go (login, refresh)
+- [x] Phase 5 — Handlers: public_ticket.go (create, get by number), admin_ticket.go (list, get full, update, add comment, stats), auth.go (login, refresh)
+- [x] Phase 5 — GetFullTicket method added to TicketService (ticket + comments + status history)
+- [x] Phase 5 — All routes wired in main.go; login/refresh correctly mounted outside JWT middleware; GetStats uses concurrent goroutines
 
 ## 9. What Needs To Be Done (in order)
 
-- [ ] Implement handler layer (public_ticket.go, admin_ticket.go, auth.go)
 - [ ] Test all endpoints manually (curl or Postman)
 - [ ] Write .env for production (Railway deployment)
 - [ ] Deploy to Railway
