@@ -287,12 +287,16 @@ ALLOWED_ORIGINS=http://localhost:3000
 - [x] Phase 5 — Handlers: public_ticket.go (create, get by number), admin_ticket.go (list, get full, update, add comment, stats), auth.go (login, refresh)
 - [x] Phase 5 — GetFullTicket method added to TicketService (ticket + comments + status history)
 - [x] Phase 5 — All routes wired in main.go; login/refresh correctly mounted outside JWT middleware; GetStats uses concurrent goroutines
+- [x] Phase 6 — Integration testing: all 14 endpoints tested and passing (create, get, list, update, comment, stats, auth)
+- [x] Phase 6 — Bug fix: UpdateTicketStatus was returning stale updated_at — fixed by re-fetching ticket via repo.GetByID after status update
 
 ## 9. What Needs To Be Done (in order)
 
-- [ ] Test all endpoints manually (curl or Postman)
+- [x] Test all endpoints manually (curl or Postman)
 - [ ] Write .env for production (Railway deployment)
 - [ ] Deploy to Railway
+
+Backend v1 complete and verified. Ready for deployment to Railway.
 
 ---
 
