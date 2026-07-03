@@ -206,6 +206,36 @@ func (s *TicketService) UpdateTicketFields(ctx context.Context, id uuid.UUID, up
 	return ticket, nil
 }
 
+// FullTicket holds a ticket with its comments and status history.
+type FullTicket struct {
+	Ticket   model.Ticket
+	Comments []model.TicketComment
+	History  []model.TicketStatusHistory
+}
+
+// GetFullTicket returns a ticket with its comments and status history.
+func (s *TicketService) GetFullTicket(ctx context.Context, id uuid.UUID) (FullTicket, error) {
+	ticket, err := s.repo.GetByID(ctx, id)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return FullTicket{}, &NotFoundError{Resource: "ticket", Key: id.String()}
+		}
+		return FullTicket{}, fmt.Errorf("ticket_service.GetFullTicket: %w", err)
+	}
+
+	comments, err := s.repo.GetCommentsByTicketID(ctx, id)
+	if err != nil {
+		return FullTicket{}, fmt.Errorf("ticket_service.GetFullTicket: %w", err)
+	}
+
+	history, err := s.repo.GetStatusHistory(ctx, id)
+	if err != nil {
+		return FullTicket{}, fmt.Errorf("ticket_service.GetFullTicket: %w", err)
+	}
+
+	return FullTicket{Ticket: ticket, Comments: comments, History: history}, nil
+}
+
 // AddComment adds a comment to a ticket.
 func (s *TicketService) AddComment(ctx context.Context, ticketID uuid.UUID, body, authorType string, authorID *uuid.UUID) (model.TicketComment, error) {
 	comment := model.TicketComment{
